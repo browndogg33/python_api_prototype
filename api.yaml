@@ -1,0 +1,389 @@
+﻿swagger: '2.0'
+host: api.egov-msp.com
+basePath: /user
+schemes:
+  - http
+info:
+  title: msp-user-v1
+  version: v1
+  description: |
+    # Introduction
+    Something goes here
+
+    # Basic Workflow
+
+    Describe the workflow of your API.
+    
+
+paths:
+  /users:
+    get:
+      summary: Get Users
+      description: Get all users
+      operationId: usersGet
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - $ref: '#/parameters/authorizationHeader'
+      responses:
+        200:
+          description: Returns the list of all users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        400:
+          description: Returns an MSP Service Exception with details about the bad request
+          schema:
+            $ref: "#/definitions/MspServiceException"
+        404:
+          description: No User was found with the search term
+      security:
+        - msp-platform-authorizer: []
+      x-amazon-apigateway-integration:
+        responses:
+          200:
+            statusCode: 200
+          400:
+            statusCode: 400
+          404:
+            statusCode: 404
+        requestParameters:
+          integration.request.header.Authorization: method.request.header.Authorization
+          integration.request.header.X-MSP-Tenant: context.authorizer.x_msp_tenant
+          integration.request.header.X-MSP-Agency: context.authorizer.x_msp_agency
+          integration.request.header.X-MSP-User: context.authorizer.x_msp_user
+        uri: http://${stageVariables.base_url}/users
+        connectionType: VPC_LINK
+        connectionId: ${stageVariables.vpcLinkId}
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http
+
+    post:
+      summary: Create User
+      description:  Creates a new User 
+      operationId: createUser
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - $ref: '#/parameters/authorizationHeader'
+        - name: userCreateRequest
+          description: JSON representation of the data required to create a new User
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserCreateRequest'
+      responses:
+        201:
+          description: Returns the newly created User
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Returns an MSP Service Exception with details about the bad request
+          schema:
+            $ref: "#/definitions/MspServiceException"
+      security:
+        - msp-platform-authorizer: []
+      x-amazon-apigateway-integration:
+        responses:
+          201:
+            statusCode: 201
+          400:
+            statusCode: 400
+        requestParameters:
+          integration.request.header.Authorization: method.request.header.Authorization
+          integration.request.header.X-MSP-Tenant: context.authorizer.x_msp_tenant
+          integration.request.header.X-MSP-Agency: context.authorizer.x_msp_agency
+          integration.request.header.X-MSP-User: context.authorizer.x_msp_user
+        uri: http://${stageVariables.base_url}/users
+        connectionType: VPC_LINK
+        connectionId: ${stageVariables.vpcLinkId}
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http
+
+  /users/{id}:
+    get:
+      summary: Get User
+      description: Returns the User with the given ID
+      operationId: getUserById
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - $ref: '#/parameters/authorizationHeader'
+        - name: id
+          description: Unique ID for User
+          type: integer
+          format: int64
+          in: path
+          required: true
+      responses:
+        200:
+          description: Returns the User with the given ID
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Returns an MSP Service Exception with details about the bad request
+          schema:
+            $ref: "#/definitions/MspServiceException"
+        404:
+          description: No User was found with the given ID
+      security:
+        - msp-platform-authorizer: []
+      x-amazon-apigateway-integration:
+        responses:
+          200:
+            statusCode: 200
+          400:
+            statusCode: 400
+          404:
+            statusCode: 404
+        requestParameters:
+          integration.request.header.Authorization: method.request.header.Authorization
+          integration.request.header.X-MSP-Tenant: context.authorizer.x_msp_tenant
+          integration.request.header.X-MSP-Agency: context.authorizer.x_msp_agency
+          integration.request.header.X-MSP-User: context.authorizer.x_msp_user
+          integration.request.path.id: method.request.path.id
+        uri: http://${stageVariables.base_url}/users/{id}
+        connectionType: VPC_LINK
+        connectionId: ${stageVariables.vpcLinkId}
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http
+
+    put:
+      summary: Update User
+      description:  Updates a User with the given ID with the supplied JSON data
+      operationId: updateUser
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - $ref: '#/parameters/authorizationHeader'
+        - name: id
+          description: Unique ID for User
+          type: integer
+          format: int64
+          in: path
+          required: true
+        - name: userUpdateRequest
+          description: JSON representation of the data used to update the User
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserCreateRequest'
+      responses:
+        200:
+          description: Returns the updated User
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Returns an MSP Service Exception with details about the bad request
+          schema:
+            $ref: "#/definitions/MspServiceException"
+        404:
+          description: No User was found with the given ID
+      security:
+        - msp-platform-authorizer: []
+      x-amazon-apigateway-integration:
+        responses:
+          200:
+            statusCode: 200
+          400:
+            statusCode: 400
+          404:
+            statusCode: 404
+        requestParameters:
+          integration.request.header.Authorization: method.request.header.Authorization
+          integration.request.header.X-MSP-Tenant: context.authorizer.x_msp_tenant
+          integration.request.header.X-MSP-Agency: context.authorizer.x_msp_agency
+          integration.request.header.X-MSP-User: context.authorizer.x_msp_user
+          integration.request.path.id: method.request.path.id
+        uri: http://${stageVariables.base_url}/users/{id}
+        connectionType: VPC_LINK
+        connectionId: ${stageVariables.vpcLinkId}
+        passthroughBehavior: when_no_match
+        httpMethod: PUT
+        type: http
+
+    delete:
+      summary: Delete User
+      description:  Deletes a User with the given ID 
+      operationId: deleteUser
+      tags:
+        - User
+      parameters:
+        - $ref: '#/parameters/authorizationHeader'
+        - name: id
+          description: Unique ID for User
+          type: integer
+          format: int64
+          in: path
+          required: true
+      responses:
+        204:
+          description: User deleted
+        400:
+          description: Returns an MSP Service Exception with details about the bad request
+          schema:
+            $ref: "#/definitions/MspServiceException"
+        404:
+          description: No User was found with the given ID
+      security:
+        - msp-platform-authorizer: []
+      x-amazon-apigateway-integration:
+        responses:
+          204:
+            statusCode: 204
+          400:
+            statusCode: 400
+          404:
+            statusCode: 404
+        requestParameters:
+          integration.request.header.Authorization: method.request.header.Authorization
+          integration.request.header.X-MSP-Tenant: context.authorizer.x_msp_tenant
+          integration.request.header.X-MSP-Agency: context.authorizer.x_msp_agency
+          integration.request.header.X-MSP-User: context.authorizer.x_msp_user
+          integration.request.path.id: method.request.path.id
+        uri: http://${stageVariables.base_url}/users/{id}
+        connectionType: VPC_LINK
+        connectionId: ${stageVariables.vpcLinkId}
+        passthroughBehavior: when_no_match
+        httpMethod: DELETE
+        type: http
+
+  /ping:
+    get:
+      summary: Health Check Endpoint
+      description: Returns a standard Ping object to check application health
+      operationId: pingGet
+      produces:
+        - application/json
+      tags:
+        - Ping
+      responses:
+        200:
+          description: Returns a Ping
+          schema:
+            $ref: '#/definitions/Ping'
+        503:
+          description: MSP Service is not up
+      x-amazon-apigateway-integration:
+        responses:
+          2\d{2}:
+            statusCode: 200
+          5\d{2}:
+            statusCode: 503
+        uri: http://${stageVariables.base_url}/ping
+        connectionType: VPC_LINK
+        connectionId: ${stageVariables.vpcLinkId}
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http
+         
+          
+securityDefinitions:
+  msp-platform-authorizer:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-amazon-apigateway-authtype: custom
+    x-amazon-apigateway-authorizer:
+      authorizerUri: "^authorizer_uri^"
+      authorizerResultTtlInSeconds: 360
+      type: token
+
+definitions:
+  User:
+    type: object
+    title: User
+    description: User 
+    properties:
+      id:
+        description:  Unique ID for the user
+        type: integer
+        format: int64
+      firstName:
+        description: User's first name
+        type: string
+        maxLength: 20
+        minLength: 2
+      lastName:
+        description: User's last name
+        type: string
+
+  UserCreateRequest:
+    type: object
+    title: UserCreateRequest
+    description: JSON that represents a user creation request 
+    properties:
+      firstName:
+        description: User's first name
+        type: string
+        maxLength: 20
+        minLength: 1
+      lastName:
+        description: User's last name
+        type: string
+        maxLength: 30
+        minLength: 1
+    required: 
+      - firstName
+      - lastName
+
+  Ping:
+    type: object
+    title: Ping
+    description: Represents a Ping Response.  This object is returned when doing a health check on the service.
+    properties:
+      ping:
+        type: string
+
+  MspServiceException:
+    type: object
+    title: MSP Service Exception
+    description: Represents a MSP Service Exception
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      parameters:
+        type: array
+        items:
+          type: string
+      violations:
+        type: array
+        items:
+          $ref: '#/definitions/MspServiceConstraintViolation'
+
+  MspServiceConstraintViolation:
+    type: object
+    title: MSP Service Constraint Violation
+    description: Represents a MSP Service Constraint Violation
+    properties:
+      propertyPath:
+        type: string
+      invalidValue:
+        type: string
+      message:
+        type: string
+
+parameters:
+  authorizationHeader:
+    name: Authorization
+    type: string
+    in: header
+    required: true
